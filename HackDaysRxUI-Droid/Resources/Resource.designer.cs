@@ -45,6 +45,9 @@ namespace HackDaysRxUIDroid
 		public partial class Id
 		{
 			
+			// aapt resource value: 0x7f050004
+			public const int ErrorView = 2131034116;
+			
 			// aapt resource value: 0x7f050003
 			public const int LoadingView = 2131034115;
 			

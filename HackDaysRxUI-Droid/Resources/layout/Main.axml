@@ -38,4 +38,18 @@
             android:gravity="center"
             android:textSize="24dp" />
     </LinearLayout>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="#ffd7253e"
+        android:visibility="gone"
+        android:id="@+id/ErrorView">
+        <TextView
+            android:text="Erro!"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center"
+            android:textSize="24dp" />
+    </LinearLayout>
 </LinearLayout>
