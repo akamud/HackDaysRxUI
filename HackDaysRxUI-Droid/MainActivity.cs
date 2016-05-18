@@ -15,13 +15,11 @@ namespace HackDaysRxUIDroid
 
 			SetContentView (Resource.Layout.Main);
 
-			//Button button = FindViewById<Button> (Resource.Id.myButton);
-
-
-
 			ViewModel = new ViewModel();
-			this.Bind (ViewModel, v => v.UserName, x => x.UserNameEditText.Text);
-			this.Bind (ViewModel, v => v.UserName, x => x.UserName.Text);
+
+			this.Bind (ViewModel, vm => vm.UserName, v => v.UserNameEditText.Text);
+			this.Bind (ViewModel, vm => vm.UserName, v => v.UserName.Text);
+			this.Bind (ViewModel, vm => vm.LoadingVisibility, v => v.LoadingView.Visibility, null, new BooleanToVisibilityTypeConverter() ,new BooleanToVisibilityTypeConverter());
 		}
 
 		public EditText UserNameEditText {
@@ -30,6 +28,10 @@ namespace HackDaysRxUIDroid
 
 		public TextView UserName {
 			get { return this.GetControl<TextView> (); }
+		}
+
+		public LinearLayout LoadingView {
+			get { return this.GetControl<LinearLayout> (); }
 		}
 	}
 }
