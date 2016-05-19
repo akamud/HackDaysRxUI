@@ -30,6 +30,7 @@ namespace HackDaysRxUICore
 			_SearchResult = Search.ToProperty(this, v => v.SearchResult, new Result());
 
 			Search.OnExecuteCompleted(result => {
+				this.ShowInfo = true;
 				Debug.WriteLine("Encontrado " + result.Users.Count + " usuários buscando por " + result.SearchUserName);
 			});
 
@@ -59,6 +60,13 @@ namespace HackDaysRxUICore
 			set { this.RaiseAndSetIfChanged(ref _showError, value); }
 		}
 
+		private bool _showInfo;
+
+		public bool ShowInfo {
+			get { return _showInfo; }
+			set { this.RaiseAndSetIfChanged(ref _showInfo, value); }
+		}
+
 		public Random random { get; set; }
 
 		public GitHubService GitHubService { get; set; }
@@ -71,6 +79,7 @@ namespace HackDaysRxUICore
 		private async Task<Result> GetGitHubUsers(string username)
 		{
 			ShowError = false;
+			ShowInfo = false;
 
 			return await GitHubService.GetUserByName(UserName);
 		}

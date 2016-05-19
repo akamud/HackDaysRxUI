@@ -23,6 +23,7 @@ namespace HackDaysRxUIDroid
 			this.Bind (ViewModel, vm => vm.UserName, v => v.UserName.Text);
 			this.Bind (ViewModel, vm => vm.LoadingVisibility, v => v.LoadingView.Visibility, null, new BooleanToVisibilityTypeConverter() ,new BooleanToVisibilityTypeConverter());
 			this.Bind (ViewModel, vm => vm.ShowError, v => v.ErrorView.Visibility, null, new BooleanToVisibilityTypeConverter() ,new BooleanToVisibilityTypeConverter());
+			this.Bind (ViewModel, vm => vm.LoadingVisibility, v => v.LoadingView.Visibility, null, new BooleanToVisibilityTypeConverter() ,new BooleanToVisibilityTypeConverter());
 		}
 
 		public EditText UserNameEditText { get; private set; }
@@ -32,6 +33,10 @@ namespace HackDaysRxUIDroid
 		public LinearLayout LoadingView { get; private set; }
 
 		public LinearLayout ErrorView { get; private set; }
+
+		public ListView UsersList { get; private set; }
+
+		public TextView SearchInfo { get; private set; }
 	}
 }
 
