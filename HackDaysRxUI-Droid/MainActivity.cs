@@ -15,6 +15,8 @@ namespace HackDaysRxUIDroid
 
 			SetContentView (Resource.Layout.Main);
 
+			this.WireUpControls();
+
 			ViewModel = new ViewModel();
 
 			this.Bind (ViewModel, vm => vm.UserName, v => v.UserNameEditText.Text);
@@ -23,21 +25,13 @@ namespace HackDaysRxUIDroid
 			this.Bind (ViewModel, vm => vm.ShowError, v => v.ErrorView.Visibility, null, new BooleanToVisibilityTypeConverter() ,new BooleanToVisibilityTypeConverter());
 		}
 
-		public EditText UserNameEditText {
-			get { return this.GetControl<EditText> (); }
-		}
+		public EditText UserNameEditText { get; private set; }
 
-		public TextView UserName {
-			get { return this.GetControl<TextView> (); }
-		}
+		public TextView UserName { get; private set; }
 
-		public LinearLayout LoadingView {
-			get { return this.GetControl<LinearLayout> (); }
-		}
+		public LinearLayout LoadingView { get; private set; }
 
-		public LinearLayout ErrorView {
-			get { return this.GetControl<LinearLayout> (); }
-		}
+		public LinearLayout ErrorView { get; private set; }
 	}
 }
 
