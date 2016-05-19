@@ -8,6 +8,23 @@ namespace HackDaysRxUICore
 {
 	public class ViewModel : ReactiveObject
 	{
+		public ViewModel ()
+		{
+			GitHubService = new GitHubService();
+			random = new Random ();
+
+			var canExecute = this.WhenAnyValue(v => v.UserName)
+				.Select(s => !string.IsNullOrWhiteSpace(s));
+			Search = ReactiveCommand.CreateAsyncTask(canExecute, parameter => GetGitHubUsers(this.UserName));
+			_LoadingVisibility = Search.IsExecuting
+				.ToProperty(this, s => s.LoadingVisibility, false);
+			
+			Search.ThrownExceptions.Subscribe(ex => { ShowError = true; });
+
+			this.WhenAnyValue(u => u.UserName)
+				.InvokeCommand(Search);
+		}
+
 		private string _userName;
 
 		public string UserName {
@@ -31,30 +48,18 @@ namespace HackDaysRxUICore
 
 		public Random random { get; set; }
 
-		public ViewModel ()
-		{
-			Search = ReactiveCommand.CreateAsyncTask(parameter => GetGitHubUsers(this.UserName));
-			random = new Random ();
+		public GitHubService GitHubService { get; set; }
 
-			_LoadingVisibility = Search.IsExecuting
-				.ToProperty(this, s => s.LoadingVisibility, false);
-
-			this.WhenAnyValue(u => u.UserName)
-				.InvokeCommand(Search);
-
-			Search.ThrownExceptions.Subscribe(ex => { ShowError = true; });
+		ObservableAsPropertyHelper<List<GitHubUserInfo>> _SearchResults;
+		public List<GitHubUserInfo> SearchResults {
+			get { return _SearchResults.Value; }
 		}
 
 		private async Task<List<GitHubUserInfo>> GetGitHubUsers(string username)
 		{
 			ShowError = false;
-			await Task.Delay (1000);
-			int num = random.Next (5);
 
-			if (num == 3)
-				throw new Exception ("Deu ruim");
-
-			return new List<GitHubUserInfo>()	;
+			return await GitHubService.GetUserByName(UserName);
 		}
 	}
 }
