@@ -3,6 +3,7 @@ using ReactiveUI;
 using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace HackDaysRxUICore
 {
@@ -15,12 +16,24 @@ namespace HackDaysRxUICore
 
 			var canExecute = this.WhenAnyValue(v => v.UserName)
 				.Select(s => !string.IsNullOrWhiteSpace(s));
+			
 			Search = ReactiveCommand.CreateAsyncTask(canExecute, parameter => GetGitHubUsers(this.UserName));
+
+			// Executing
 			_LoadingVisibility = Search.IsExecuting
 				.ToProperty(this, s => s.LoadingVisibility, false);
-			
-			Search.ThrownExceptions.Subscribe(ex => { ShowError = true; });
 
+			// Erros
+			Search.ThrownExceptions.Subscribe(ex => { ShowError = true; Debug.WriteLine("Erro buscando por: " + this.UserName); });
+
+			// Sucesso
+			_SearchResult = Search.ToProperty(this, v => v.SearchResult, new Result());
+
+			Search.OnExecuteCompleted(result => {
+				Debug.WriteLine("Encontrado " + result.Users.Count + " usuários buscando por " + result.SearchUserName);
+			});
+
+			// Act
 			this.WhenAnyValue(u => u.UserName)
 				.InvokeCommand(Search);
 		}
@@ -32,7 +45,7 @@ namespace HackDaysRxUICore
 			set { this.RaiseAndSetIfChanged(ref _userName, value); }
 		}
 
-		public ReactiveCommand<List<GitHubUserInfo>> Search { get; protected set; }
+		public ReactiveCommand<Result> Search { get; protected set; }
 
 		ObservableAsPropertyHelper<bool> _LoadingVisibility;
 		public bool LoadingVisibility  {
@@ -50,12 +63,12 @@ namespace HackDaysRxUICore
 
 		public GitHubService GitHubService { get; set; }
 
-		ObservableAsPropertyHelper<List<GitHubUserInfo>> _SearchResults;
-		public List<GitHubUserInfo> SearchResults {
-			get { return _SearchResults.Value; }
+		ObservableAsPropertyHelper<Result> _SearchResult;
+		public Result SearchResult {
+			get { return _SearchResult.Value; }
 		}
 
-		private async Task<List<GitHubUserInfo>> GetGitHubUsers(string username)
+		private async Task<Result> GetGitHubUsers(string username)
 		{
 			ShowError = false;
 

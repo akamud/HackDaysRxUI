@@ -26,6 +26,19 @@ namespace HackDaysRxUICore
 		public double Score { get; set; }
 	}
 
+	public class Result
+	{
+		public Result()
+		{
+			SearchUserName = "";
+			Users = new List<GitHubUserInfo>();
+		}
+
+		public string SearchUserName { get; set; }
+
+		public List<GitHubUserInfo> Users { get; set; }
+	}
+
 	public class RootObject
 	{
 		public int Total_count { get; set; }

@@ -17,24 +17,27 @@ namespace HackDaysRxUICore
 			return JsonConvert.DeserializeObject<RootObject>(UserFakeData.UserInfo).Items;
 		}
 
-		public async Task<List<GitHubUserInfo>> GetUserByName(string name)
+		public async Task<Result> GetUserByName(string name)
 		{
 			Debug.WriteLine("Buscando por: " + name);
 
-			// delay na rede
-			await Task.Delay(_random.Next(1000, 3000));
-
-			// erros
-			if (_random.Next(100) > 80)
-			{
-				throw new InvalidOperationException("deu ruim");
-			}
-
-			return GetAll()
-				.Where(c => string.Compare(c.Login, name, StringComparison.CurrentCultureIgnoreCase) >= 0)
-				.ToList();
+			return await FakeData(name);
 
 			//https://api.github.com/search/users?q=tom
+		}
+
+		private async Task<Result> FakeData(string name)
+		{
+			// delay na rede
+			await Task.Delay(_random.Next(1000, 3000));
+			// erros
+			if(_random.Next(100) > 80) {
+				throw new InvalidOperationException("deu ruim");
+			}
+			return new Result {
+				SearchUserName = name,
+				Users = GetAll().Where(c => c.Login.ToLower().Contains(name.ToLower())).ToList()
+			};
 		}
 	}
 }
