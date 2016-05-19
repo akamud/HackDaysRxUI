@@ -19,11 +19,16 @@ namespace HackDaysRxUIDroid
 
 			ViewModel = new ViewModel();
 
-			this.Bind (ViewModel, vm => vm.UserName, v => v.UserNameEditText.Text);
-			this.Bind (ViewModel, vm => vm.UserName, v => v.UserName.Text);
-			this.Bind (ViewModel, vm => vm.LoadingVisibility, v => v.LoadingView.Visibility, null, new BooleanToVisibilityTypeConverter() ,new BooleanToVisibilityTypeConverter());
-			this.Bind (ViewModel, vm => vm.ShowError, v => v.ErrorView.Visibility, null, new BooleanToVisibilityTypeConverter() ,new BooleanToVisibilityTypeConverter());
-			this.Bind (ViewModel, vm => vm.LoadingVisibility, v => v.LoadingView.Visibility, null, new BooleanToVisibilityTypeConverter() ,new BooleanToVisibilityTypeConverter());
+			this.Bind(ViewModel, vm => vm.UserName, v => v.UserNameEditText.Text);
+			this.Bind(ViewModel, vm => vm.LoadingVisibility, v => v.LoadingView.Visibility, null, new BooleanToVisibilityTypeConverter() ,new BooleanToVisibilityTypeConverter());
+			this.Bind(ViewModel, vm => vm.ShowError, v => v.ErrorView.Visibility, null, new BooleanToVisibilityTypeConverter() ,new BooleanToVisibilityTypeConverter());
+			//this.Bind(ViewModel, vm => vm.SearchResult.SearchUserName, v => v.SearchInfo.Text);
+
+			var adapter = new ReactiveListAdapter<GitHubUserInfo>(
+				ViewModel.SearchResult,
+				(viewModel, parent) => new GitHubUserInfoView(viewModel, this, parent));
+
+			UsersList.Adapter = adapter;
 		}
 
 		public EditText UserNameEditText { get; private set; }

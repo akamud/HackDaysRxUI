@@ -27,11 +27,11 @@ namespace HackDaysRxUICore
 			Search.ThrownExceptions.Subscribe(ex => { ShowError = true; Debug.WriteLine("Erro buscando por: " + this.UserName); });
 
 			// Sucesso
-			_SearchResult = Search.ToProperty(this, v => v.SearchResult, new Result());
+			_searchResult = Search.ToProperty(this, v => v.SearchResult, new ReactiveList<GitHubUserInfo>());
 
 			Search.OnExecuteCompleted(result => {
 				this.ShowInfo = true;
-				Debug.WriteLine("Encontrado " + result.Users.Count + " usuários buscando por " + result.SearchUserName);
+				Debug.WriteLine("Encontrado " + result.Count + " usuários buscando por " + this.UserName);
 			});
 
 			// Act
@@ -46,7 +46,7 @@ namespace HackDaysRxUICore
 			set { this.RaiseAndSetIfChanged(ref _userName, value); }
 		}
 
-		public ReactiveCommand<Result> Search { get; protected set; }
+		public ReactiveCommand<ReactiveList<GitHubUserInfo>> Search { get; protected set; }
 
 		ObservableAsPropertyHelper<bool> _LoadingVisibility;
 		public bool LoadingVisibility  {
@@ -71,12 +71,12 @@ namespace HackDaysRxUICore
 
 		public GitHubService GitHubService { get; set; }
 
-		ObservableAsPropertyHelper<Result> _SearchResult;
-		public Result SearchResult {
-			get { return _SearchResult.Value; }
+		ObservableAsPropertyHelper<ReactiveList<GitHubUserInfo>> _searchResult;
+		public ReactiveList<GitHubUserInfo> SearchResult  {
+			get { return _searchResult.Value; }
 		}
 
-		private async Task<Result> GetGitHubUsers(string username)
+		private async Task<ReactiveList<GitHubUserInfo>> GetGitHubUsers(string username)
 		{
 			ShowError = false;
 			ShowInfo = false;
