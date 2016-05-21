@@ -13,11 +13,19 @@ namespace HackDaysRxUICore
 {
 	public class GitHubService
 	{
+		readonly Random _random = new Random();
 		private List<GitHubUserInfo> list;
 
 		public GitHubService()
 		{
 			list = new List<GitHubUserInfo>();
+		}
+
+		static List<GitHubUserInfo> GetAll()
+		{
+			var root = JsonConvert.DeserializeObject<RootObject>(UserFakeData.UserInfo);
+
+			return root.Items;
 		}
 
 		public async Task<List<GitHubUserInfo>> GetUserByName(string name)
@@ -26,17 +34,42 @@ namespace HackDaysRxUICore
 
             if (!string.IsNullOrWhiteSpace(name))
             {
-			    Debug.WriteLine("Searching for: " + name);
+			    Debug.WriteLine("Buscando por: " + name);
 
-                var github = new GitHubClient(new ProductHeaderValue("RxUI"));
-                var users = await github.Search.SearchUsers(new SearchUsersRequest(name)).ConfigureAwait(false);
-                list = users.Items.Where(c => c.Login.ToLower().Contains(name.ToLower()))
-                    .Select(u => new GitHubUserInfo() { Login = u.Login })
-                    .ToList();
+                await Task.Yield();
+
+                return await FakeData(name);
+
+                //var github = new GitHubClient(new ProductHeaderValue("RxUI"));
+                //var users = await github.Search.SearchUsers(new SearchUsersRequest(name)).ConfigureAwait(false);
+                //list = users.Items.Where(c => c.Login.ToLower().Contains(name.ToLower()))
+                //    .Select(u => new GitHubUserInfo() { Login = u.Login })
+                //    .ToList();
             }
 
             return list;
         }
-	}
+
+        private async Task<List<GitHubUserInfo>> FakeData(string name)
+        {
+            // delay na rede
+            //await Task.Delay(_random.Next(1000, 3000));
+            await Task.Delay(_random.Next(1000, 3000));
+
+            //erros
+            if (_random.Next(100) > 90)
+            {
+                Debug.WriteLine("Erro buscando por: " + name);
+                throw new InvalidOperationException("deu ruim");
+            }
+
+            var result = new Result(GetAll().Where(c => c.Login.ToLower().Contains(name.ToLower())).ToList())
+            {
+                SearchUserName = name
+            };
+
+            return GetAll().Where(c => c.Login.ToLower().Contains(name.ToLower())).ToList();
+        }
+    }
 }
 

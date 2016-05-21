@@ -29,16 +29,32 @@ namespace HackDaysRxUICore
                 Debug.WriteLine("Encontrado " + result.Count + " usuários buscando por " + this.UserName);
             });
 
-            this.Search.Subscribe(
-                results =>
+            //this.Search.Subscribe(
+            //    results =>
+            //    {
+            //        SearchResults.Clear();
+            //        if (results != null)
+            //            SearchResults.AddRange(results);
+            //    });
+
+            //this.WhenAnyValue(u => u.UserName)
+            //    .Throttle(TimeSpan.FromMilliseconds(300), RxApp.MainThreadScheduler)
+            //    .DistinctUntilChanged()
+            //    .InvokeCommand(Search);
+
+            this.WhenAnyValue(u => u.UserName)
+                .Throttle(TimeSpan.FromMilliseconds(200), RxApp.MainThreadScheduler)
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .DistinctUntilChanged()
+                .Select(u => this.Search.ExecuteAsync())
+                .Switch()
+                .Retry()
+                .Subscribe(results =>
                 {
                     SearchResults.Clear();
                     if (results != null)
                         SearchResults.AddRange(results);
                 });
-
-            this.WhenAnyValue(u => u.UserName)
-                .InvokeCommand(Search);
         }
 
         private string _userName;
