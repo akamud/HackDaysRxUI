@@ -25,7 +25,7 @@ namespace HackDaysRxUIDroid
 			//this.Bind(ViewModel, vm => vm.SearchResult.SearchUserName, v => v.SearchInfo.Text);
 
 			var adapter = new ReactiveListAdapter<GitHubUserInfo>(
-				ViewModel.SearchResult,
+				ViewModel.SearchResults,
 				(viewModel, parent) => new GitHubUserInfoView(viewModel, this, parent));
 
 			UsersList.Adapter = adapter;

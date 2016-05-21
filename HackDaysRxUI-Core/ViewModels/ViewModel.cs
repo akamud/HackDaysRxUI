@@ -7,81 +7,72 @@ using System.Diagnostics;
 
 namespace HackDaysRxUICore
 {
-	public class ViewModel : ReactiveObject
-	{
-		public ViewModel ()
-		{
-			GitHubService = new GitHubService();
-			random = new Random ();
+    public class ViewModel : ReactiveObject
+    {
+        public ViewModel ()
+        {
+            Search = ReactiveCommand.CreateAsyncTask(parameter => GetGitHubUsers(this.UserName));
 
-			var canExecute = this.WhenAnyValue(v => v.UserName)
-				.Select(s => !string.IsNullOrWhiteSpace(s));
-			
-			Search = ReactiveCommand.CreateAsyncTask(canExecute, parameter => GetGitHubUsers(this.UserName));
+            // Executing
+            _LoadingVisibility = Search.IsExecuting
+                .ToProperty(this, s => s.LoadingVisibility, true);
 
-			// Executing
-			_LoadingVisibility = Search.IsExecuting
-				.ToProperty(this, s => s.LoadingVisibility, false);
+            // Erros
+            Search.ThrownExceptions.Subscribe(ex => { ShowError = true; Debug.WriteLine("Erro buscando por: " + this.UserName); });
 
-			// Erros
-			Search.ThrownExceptions.Subscribe(ex => { ShowError = true; Debug.WriteLine("Erro buscando por: " + this.UserName); });
+            Search.OnExecuteCompleted(result => {
+                Debug.WriteLine("Encontrado " + result.Count + " usuários buscando por " + this.UserName);
+            });
 
-			// Sucesso
-			_searchResult = Search.ToProperty(this, v => v.SearchResult, new ReactiveList<GitHubUserInfo>());
+            this.Search.Subscribe(
+                results =>
+                {
+                    this.SearchResults.Clear();
+                    this.SearchResults.AddRange(results);
+                });
 
-			Search.OnExecuteCompleted(result => {
-				this.ShowInfo = true;
-				Debug.WriteLine("Encontrado " + result.Count + " usuários buscando por " + this.UserName);
-			});
+            this.WhenAnyValue(u => u.UserName)
+                .InvokeCommand(Search);
+        }
 
-			// Act
-			this.WhenAnyValue(u => u.UserName)
-				.InvokeCommand(Search);
-		}
+        private string _userName;
 
-		private string _userName;
+        public string UserName {
+            get { return _userName; }
+            set { this.RaiseAndSetIfChanged(ref _userName, value); }
+        }
 
-		public string UserName {
-			get { return _userName; }
-			set { this.RaiseAndSetIfChanged(ref _userName, value); }
-		}
+        public ReactiveCommand<List<GitHubUserInfo>> Search { get; protected set; }
 
-		public ReactiveCommand<ReactiveList<GitHubUserInfo>> Search { get; protected set; }
+        ObservableAsPropertyHelper<bool> _LoadingVisibility;
+        public bool LoadingVisibility  {
+            get { return _LoadingVisibility.Value; }
+        }
 
-		ObservableAsPropertyHelper<bool> _LoadingVisibility;
-		public bool LoadingVisibility  {
-			get { return _LoadingVisibility.Value; }
-		}
+        private bool _showError;
 
-		private bool _showError;
+        public bool ShowError {
+            get { return _showError; }
+            set { this.RaiseAndSetIfChanged(ref _showError, value); }
+        }
 
-		public bool ShowError {
-			get { return _showError; }
-			set { this.RaiseAndSetIfChanged(ref _showError, value); }
-		}
+        private readonly GitHubService GitHubService = new GitHubService();
 
-		private bool _showInfo;
+        private ReactiveList<GitHubUserInfo> _searchResults = new ReactiveList<GitHubUserInfo>();
 
-		public bool ShowInfo {
-			get { return _showInfo; }
-			set { this.RaiseAndSetIfChanged(ref _showInfo, value); }
-		}
+        public ReactiveList<GitHubUserInfo> SearchResults
+        {
+            get { return _searchResults; }
+            set { this.RaiseAndSetIfChanged(ref _searchResults, value); }
+        }
 
-		public Random random { get; set; }
+        private async Task<List<GitHubUserInfo>> GetGitHubUsers(string username)
+        {
+            ShowError = false;
 
-		public GitHubService GitHubService { get; set; }
+            await Task.Yield();
 
-		ObservableAsPropertyHelper<ReactiveList<GitHubUserInfo>> _searchResult;
-		public ReactiveList<GitHubUserInfo> SearchResult  {
-			get { return _searchResult.Value; }
-		}
-
-		private async Task<ReactiveList<GitHubUserInfo>> GetGitHubUsers(string username)
-		{
-			ShowError = false;
-			ShowInfo = false;
-
-			return await GitHubService.GetUserByName(UserName);
-		}
-	}
+            return string.IsNullOrWhiteSpace(username) ? new List<GitHubUserInfo>() : GitHubService.GetUserByName(UserName);
+        }
+    }
 }

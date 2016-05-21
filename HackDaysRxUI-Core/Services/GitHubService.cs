@@ -12,11 +12,11 @@ namespace HackDaysRxUICore
 	public class GitHubService
 	{
 		readonly Random _random = new Random();
-		private ReactiveList<GitHubUserInfo> list;
+		private List<GitHubUserInfo> list;
 
 		public GitHubService()
 		{
-			list = new ReactiveList<GitHubUserInfo>();
+			list = new List<GitHubUserInfo>();
 		}
 
 		static List<GitHubUserInfo> GetAll()
@@ -26,19 +26,19 @@ namespace HackDaysRxUICore
 			return root.Items;
 		}
 
-		public async Task<ReactiveList<GitHubUserInfo>> GetUserByName(string name)
+		public List<GitHubUserInfo> GetUserByName(string name)
 		{
 			Debug.WriteLine("Buscando por: " + name);
 
-			return await FakeData(name);
+			return FakeData(name);
 
 			//https://api.github.com/search/users?q=tom
 		}
 
-		private async Task<ReactiveList<GitHubUserInfo>> FakeData(string name)
+		private List<GitHubUserInfo> FakeData(string name)
 		{
 			// delay na rede
-			await Task.Delay(_random.Next(1000, 3000));
+			//await Task.Delay(_random.Next(1000, 3000));
 			// erros
 //			if(_random.Next(100) > 80) {
 //				throw new InvalidOperationException("deu ruim");
@@ -48,7 +48,7 @@ namespace HackDaysRxUICore
 				SearchUserName = name
 			};
 
-			return new ReactiveList<GitHubUserInfo>(GetAll().Where(c => c.Login.ToLower().Contains(name.ToLower())));
+			return GetAll().Where(c => c.Login.ToLower().Contains(name.ToLower())).ToList();
 		}
 	}
 }
