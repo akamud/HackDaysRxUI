@@ -71,7 +71,18 @@ namespace HackDaysRxUICore
                 SearchUserName = name
             };
 
-            return GetAll().Where(c => c.Login.ToLower().Contains(name.ToLower())).ToList();
+            var list = GetAll().Where(c => c.Login.ToLower().Contains(name.ToLower())).ToList();
+            ApplyFormatting(name, list);
+
+            return list;
+        }
+
+        private static void ApplyFormatting(string name, List<GitHubUserInfo> list)
+        {
+            foreach (var item in list)
+            {
+                item.Login = item.Login.Replace(name, "<font color='blue'><b>" + name + "</b></font>");
+            }
         }
     }
 }
