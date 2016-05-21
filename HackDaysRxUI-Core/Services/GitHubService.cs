@@ -34,7 +34,7 @@ namespace HackDaysRxUICore
 
             if (!string.IsNullOrWhiteSpace(name))
             {
-			    Debug.WriteLine("Buscando por: " + name);
+			    //Debug.WriteLine("Buscando por: " + name);
 
                 await Task.Yield();
 

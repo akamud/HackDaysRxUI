@@ -22,11 +22,13 @@ namespace HackDaysRxUICore
             Search.ThrownExceptions.Subscribe(ex =>
             {
                 ShowError = true;
-                Debug.WriteLine("Erro buscando por: " + this.UserName);
+                AppendLog("Erro buscando por: " + this.UserName);
+                //Debug.WriteLine("Erro buscando por: " + this.UserName);
             });
 
             Search.OnExecuteCompleted(result => {
-                Debug.WriteLine("Encontrado " + result.Count + " usuários buscando por " + this.UserName);
+                AppendLog("Encontrado " + result.Count + " usuários buscando por " + this.UserName);
+                //Debug.WriteLine("Encontrado " + result.Count + " usuários buscando por " + this.UserName);
             });
 
             //this.Search.Subscribe(
@@ -89,13 +91,26 @@ namespace HackDaysRxUICore
             set { this.RaiseAndSetIfChanged(ref _searchResults, value); }
         }
 
+        private string _log;
+
+        public string Log
+        {
+            get { return _log; }
+            set { this.RaiseAndSetIfChanged(ref _log, value); }
+        }
+
+        private void AppendLog(string log)
+        {
+            Log = string.IsNullOrWhiteSpace(Log) ? log : log + "<br /><br />" + Log;
+        }
+
         private async Task<List<GitHubUserInfo>> GetGitHubUsers(string username)
         {
             ShowError = false;
 
-            //await Task.Yield();
+            AppendLog("Buscando por: " + username);
 
-            return await GitHubService.GetUserByName(username).ConfigureAwait(false);
+            return await GitHubService.GetUserByName(username);
         }
     }
 }

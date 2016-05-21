@@ -67,6 +67,9 @@ namespace HackDaysRxUIDroid
 			// aapt resource value: 0x7f060004
 			public const int LoadingView = 2131099652;
 			
+			// aapt resource value: 0x7f060008
+			public const int Log = 2131099656;
+			
 			// aapt resource value: 0x7f060000
 			public const int Login = 2131099648;
 			
