@@ -54,7 +54,10 @@ namespace HackDaysRxUICore
         {
             // delay na rede
             //await Task.Delay(_random.Next(1000, 3000));
-            await Task.Delay(_random.Next(1000, 3000));
+            if (name == "tom")
+                await Task.Delay(7000);
+            else
+                await Task.Delay(_random.Next(1000, 3000));
 
             //erros
             if (_random.Next(100) > 90)

@@ -10,7 +10,7 @@ namespace HackDaysRxUICore
 {
     public class ViewModel : ReactiveObject
     {
-        public ViewModel ()
+        public ViewModel()
         {
             Search = ReactiveCommand.CreateAsyncTask(parameter => GetGitHubUsers(this.UserName));
 
@@ -19,7 +19,7 @@ namespace HackDaysRxUICore
                 .ToProperty(this, s => s.LoadingVisibility, true);
 
             // Erros
-            Search.ThrownExceptions.Subscribe(ex => 
+            Search.ThrownExceptions.Subscribe(ex =>
             {
                 ShowError = true;
                 Debug.WriteLine("Erro buscando por: " + this.UserName);
@@ -43,8 +43,9 @@ namespace HackDaysRxUICore
             //    .InvokeCommand(Search);
 
             this.WhenAnyValue(u => u.UserName)
-                .Throttle(TimeSpan.FromMilliseconds(200), RxApp.MainThreadScheduler)
-                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .Throttle(TimeSpan.FromMilliseconds(250), RxApp.MainThreadScheduler)
+                .Where(s => !string.IsNullOrWhiteSpace(s))
+                .Select(x => x.Trim())
                 .DistinctUntilChanged()
                 .Select(u => this.Search.ExecuteAsync())
                 .Switch()
