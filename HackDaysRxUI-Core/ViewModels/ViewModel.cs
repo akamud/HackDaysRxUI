@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using Octokit;
 
 namespace HackDaysRxUICore
 {
@@ -18,7 +19,11 @@ namespace HackDaysRxUICore
                 .ToProperty(this, s => s.LoadingVisibility, true);
 
             // Erros
-            Search.ThrownExceptions.Subscribe(ex => { ShowError = true; Debug.WriteLine("Erro buscando por: " + this.UserName); });
+            Search.ThrownExceptions.Subscribe(ex => 
+            {
+                ShowError = true;
+                Debug.WriteLine("Erro buscando por: " + this.UserName);
+            });
 
             Search.OnExecuteCompleted(result => {
                 Debug.WriteLine("Encontrado " + result.Count + " usuários buscando por " + this.UserName);
@@ -27,8 +32,9 @@ namespace HackDaysRxUICore
             this.Search.Subscribe(
                 results =>
                 {
-                    this.SearchResults.Clear();
-                    this.SearchResults.AddRange(results);
+                    SearchResults.Clear();
+                    if (results != null)
+                        SearchResults.AddRange(results);
                 });
 
             this.WhenAnyValue(u => u.UserName)
@@ -70,9 +76,9 @@ namespace HackDaysRxUICore
         {
             ShowError = false;
 
-            await Task.Yield();
+            //await Task.Yield();
 
-            return string.IsNullOrWhiteSpace(username) ? new List<GitHubUserInfo>() : GitHubService.GetUserByName(UserName);
+            return await GitHubService.GetUserByName(username).ConfigureAwait(false);
         }
     }
 }

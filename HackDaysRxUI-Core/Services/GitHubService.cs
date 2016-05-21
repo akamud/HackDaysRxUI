@@ -6,6 +6,8 @@ using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Linq;
 using ReactiveUI;
+using System.Text;
+using Octokit;
 
 namespace HackDaysRxUICore
 {
@@ -26,14 +28,25 @@ namespace HackDaysRxUICore
 			return root.Items;
 		}
 
-		public List<GitHubUserInfo> GetUserByName(string name)
+		public async Task<List<GitHubUserInfo>> GetUserByName(string name)
 		{
-			Debug.WriteLine("Buscando por: " + name);
+            List<GitHubUserInfo> list = new List<GitHubUserInfo>();
 
-			return FakeData(name);
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+			    Debug.WriteLine("Buscando por: " + name);
 
-			//https://api.github.com/search/users?q=tom
-		}
+                //return FakeData(name);
+
+                var github = new GitHubClient(new ProductHeaderValue("RxUI"));
+                var users = await github.Search.SearchUsers(new SearchUsersRequest(name)).ConfigureAwait(false);
+                list = users.Items.Where(c => c.Login.ToLower().Contains(name.ToLower()))
+                    .Select(u => new GitHubUserInfo() { Login = u.Login })
+                    .ToList();
+            }
+
+            return list;
+        }
 
 		private List<GitHubUserInfo> FakeData(string name)
 		{
