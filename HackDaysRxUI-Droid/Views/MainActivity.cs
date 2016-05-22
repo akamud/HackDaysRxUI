@@ -79,6 +79,8 @@ namespace HackDaysRxUIDroid.Views
 
         public EditText UserNameEditText { get; private set; }
 
+        public TextView UserName { get; private set; }
+
         public TextView Log { get; private set; }
 
         public ListView UsersList { get; private set; }

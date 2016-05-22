@@ -45,13 +45,7 @@ namespace HackDaysRxUICore
             #endregion
         }
 
-        private string _userName;
-
-        public string UserName {
-            get { return _userName; }
-            set { this.RaiseAndSetIfChanged(ref _userName, value); }
-        }
-
+        #region prop
         // Valor depende de outra property, transformada em um observable
         ObservableAsPropertyHelper<bool> _LoadingVisibility;
         public bool LoadingVisibility  {
@@ -72,7 +66,8 @@ namespace HackDaysRxUICore
             get { return _searchResults; }
             set { this.RaiseAndSetIfChanged(ref _searchResults, value); }
         }
-        
+        #endregion
+
         private async Task<List<GitHubUserInfo>> GetGitHubUsers(string username)
         {
             ShowError = false;
