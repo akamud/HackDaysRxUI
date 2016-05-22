@@ -11,6 +11,7 @@ using HackDaysRxUIDroid.Converters;
 using System.Collections.Generic;
 using System.Reactive.Disposables;
 using HackDaysRxUICore.Helpers;
+using System.Linq;
 
 namespace HackDaysRxUIDroid.Views
 {
@@ -29,40 +30,107 @@ namespace HackDaysRxUIDroid.Views
             Log = FindViewById<TextView>(Resource.Id.Log);
             Log.MovementMethod = new ScrollingMovementMethod();
 
-            #region Range
-            //var rangeStream = Observable.Range(1, 10);
+            //Range();
 
-            //rangeStream.Subscribe(num =>
-            //    {
-            //        Log.Text = num.ToString() + "\n" + Log.Text;
-            //    })
-            //    .DisposeWith(compositeDisposables);
-            #endregion
+            //Timer();
 
-            #region Timer
-            //var timerStream = Observable.Timer(TimeSpan.FromSeconds(3));
+            //EventPattern();
 
-            //timerStream.Subscribe(num =>
-            //{
-            //    Log.Text = "Timer";
-            //})
-            //    .DisposeWith(compositeDisposables);
-            #endregion
+            //Merge();
 
-            #region Event
+            //Zip();
+        }
+
+
+        private void Timer()
+        {
+            var timerStream = Observable.Timer(TimeSpan.FromSeconds(3));
+
+            timerStream
+                .Subscribe(num =>
+                    RunOnUiThread(() =>
+                    {
+                        Log.Text = "Timer";
+                    }))
+                .DisposeWith(compositeDisposables);
+        }
+
+        private void Range()
+        {
+            var rangeStream = Observable.Range(1, 10);
+
+            rangeStream
+                .Subscribe(num =>
+                    RunOnUiThread(() =>
+                    {
+                        Log.Text = num.ToString() + "\n" + Log.Text;
+                    }))
+                .DisposeWith(compositeDisposables);
+        }
+
+        private void EventPattern()
+        {
             var textStream = Observable.FromEventPattern<EventHandler<TextChangedEventArgs>, TextChangedEventArgs>(
-                x => UserNameEditText.TextChanged += x,
-                x => UserNameEditText.TextChanged -= x
-            );
+                                x => UserNameEditText.TextChanged += x,
+                                x => UserNameEditText.TextChanged -= x
+                            );
+            //.Select(args => args.EventArgs.Text);
 
             textStream
-                .Subscribe(args =>
-                {
-                    Log.Text = args.EventArgs.Text + "\n" + Log.Text;
-                });
-            #endregion
-
+                //.Where(text => text.Contains('o'))
+                //.Buffer(3)
+                //.Throttle(TimeSpan.FromSeconds(1))
+                //.Delay(TimeSpan.FromSeconds(1))
+                .Subscribe(text =>
+                    RunOnUiThread(() =>
+                    {
+                        Log.Text = text.ToString() + "\n" + Log.Text;
+                    }))
+                .DisposeWith(compositeDisposables);
         }
+
+        private void Merge()
+        {
+            var textStream = Observable.FromEventPattern<EventHandler<TextChangedEventArgs>, TextChangedEventArgs>(
+                                x => UserNameEditText.TextChanged += x,
+                                x => UserNameEditText.TextChanged -= x
+                            )
+                            .Select(args => args.EventArgs.Text);
+
+            var rangeStream = Observable.Interval(TimeSpan.FromSeconds(1))
+                .Select(num => num.ToString());
+
+            textStream
+                .Merge(rangeStream)
+                .Subscribe(text =>
+                    RunOnUiThread(() =>
+                    {
+                        Log.Text = text.ToString() + "\n" + Log.Text;
+                    }))
+                .DisposeWith(compositeDisposables);
+        }
+
+        private void Zip()
+        {
+            var textStream = Observable.FromEventPattern<EventHandler<TextChangedEventArgs>, TextChangedEventArgs>(
+                                x => UserNameEditText.TextChanged += x,
+                                x => UserNameEditText.TextChanged -= x
+                            )
+                            .Select(args => args.EventArgs.Text);
+
+            var rangeStream = Observable.Interval(TimeSpan.FromSeconds(1))
+                .Select(num => num.ToString());
+
+            textStream
+                .Zip(rangeStream, (text, num) => text + " " + num)
+                .Subscribe(text =>
+                    RunOnUiThread(() =>
+                    {
+                        Log.Text = text.ToString() + "\n" + Log.Text;
+                    }))
+                .DisposeWith(compositeDisposables);
+        }
+
 
         protected override void OnDestroy()
         {
