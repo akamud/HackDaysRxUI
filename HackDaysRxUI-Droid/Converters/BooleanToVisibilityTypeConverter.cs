@@ -2,7 +2,7 @@
 using ReactiveUI;
 using Android.Views;
 
-namespace HackDaysRxUIDroid
+namespace HackDaysRxUIDroid.Converters
 {
 	public class BooleanToVisibilityTypeConverter : IBindingTypeConverter
 	{

@@ -7,6 +7,8 @@ using System;
 using Android.Text;
 using System.Reactive.Linq;
 using Android.Text.Method;
+using HackDaysRxUIDroid.Converters;
+using HackDaysRxUIDroid.Views;
 
 namespace HackDaysRxUIDroid
 {

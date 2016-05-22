@@ -3,7 +3,7 @@ using ReactiveUI;
 using Android.Views;
 using Android.Text;
 
-namespace HackDaysRxUIDroid
+namespace HackDaysRxUIDroid.Converters
 {
 	public class StringToSpannedTypeConverter : IBindingTypeConverter
 	{

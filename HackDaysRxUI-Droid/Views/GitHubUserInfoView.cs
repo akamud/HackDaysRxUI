@@ -12,8 +12,9 @@ using Android.Views;
 using Android.Widget;
 using ReactiveUI;
 using HackDaysRxUICore;
+using HackDaysRxUIDroid.Converters;
 
-namespace HackDaysRxUIDroid
+namespace HackDaysRxUIDroid.Views
 {
 	public class GitHubUserInfoView : ReactiveViewHost<GitHubUserInfo>
 	{

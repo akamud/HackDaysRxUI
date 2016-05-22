@@ -23,26 +23,11 @@ namespace HackDaysRxUICore
             {
                 ShowError = true;
                 AppendLog("Erro buscando por: " + this.UserName);
-                //Debug.WriteLine("Erro buscando por: " + this.UserName);
             });
 
             Search.OnExecuteCompleted(result => {
                 AppendLog("Encontrado " + result.Count + " usuários buscando por " + this.UserName);
-                //Debug.WriteLine("Encontrado " + result.Count + " usuários buscando por " + this.UserName);
             });
-
-            //this.Search.Subscribe(
-            //    results =>
-            //    {
-            //        SearchResults.Clear();
-            //        if (results != null)
-            //            SearchResults.AddRange(results);
-            //    });
-
-            //this.WhenAnyValue(u => u.UserName)
-            //    .Throttle(TimeSpan.FromMilliseconds(300), RxApp.MainThreadScheduler)
-            //    .DistinctUntilChanged()
-            //    .InvokeCommand(Search);
 
             this.WhenAnyValue(u => u.UserName)
                 .Throttle(TimeSpan.FromMilliseconds(250), RxApp.MainThreadScheduler)
@@ -60,14 +45,16 @@ namespace HackDaysRxUICore
                 });
         }
 
+        public ReactiveCommand<List<GitHubUserInfo>> Search { get; protected set; }
+
+        private readonly GitHubService GitHubService = new GitHubService();
+
         private string _userName;
 
         public string UserName {
             get { return _userName; }
             set { this.RaiseAndSetIfChanged(ref _userName, value); }
         }
-
-        public ReactiveCommand<List<GitHubUserInfo>> Search { get; protected set; }
 
         ObservableAsPropertyHelper<bool> _LoadingVisibility;
         public bool LoadingVisibility  {
@@ -80,8 +67,6 @@ namespace HackDaysRxUICore
             get { return _showError; }
             set { this.RaiseAndSetIfChanged(ref _showError, value); }
         }
-
-        private readonly GitHubService GitHubService = new GitHubService();
 
         private ReactiveList<GitHubUserInfo> _searchResults = new ReactiveList<GitHubUserInfo>();
 

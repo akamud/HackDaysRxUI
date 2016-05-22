@@ -45,30 +45,6 @@ namespace HackDaysRxUICore
 		public double Score { get; set; }
 	}
 
-	public class Result
-	{
-		public Result()
-		{
-			SearchUserName = "";
-			users = new ReactiveList<GitHubUserInfo>();
-		}
-
-		public Result(List<GitHubUserInfo> list)
-		{
-			SearchUserName = "";
-			users.AddRange(list);
-		}
-
-		public string SearchUserName { get; set; }
-
-		private readonly ReactiveList<GitHubUserInfo> users = new ReactiveList<GitHubUserInfo>();
-
-		public IReadOnlyReactiveList<GitHubUserInfo> Users
-		{
-			get { return users; }
-		}
-	}
-
 	public class RootObject
 	{
 		public int Total_count { get; set; }
