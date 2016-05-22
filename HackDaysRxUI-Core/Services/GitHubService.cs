@@ -11,25 +11,25 @@ using Octokit;
 
 namespace HackDaysRxUICore
 {
-	public class GitHubService
-	{
-		readonly Random _random = new Random();
-		private List<GitHubUserInfo> list;
+    public class GitHubService
+    {
+        readonly Random _random = new Random();
+        private List<GitHubUserInfo> list;
 
-		public GitHubService()
-		{
-			list = new List<GitHubUserInfo>();
-		}
+        public GitHubService()
+        {
+            list = new List<GitHubUserInfo>();
+        }
 
-		static List<GitHubUserInfo> GetAll()
-		{
-			var root = JsonConvert.DeserializeObject<RootObject>(UserFakeData.UserInfo);
+        static List<GitHubUserInfo> GetAll()
+        {
+            var root = JsonConvert.DeserializeObject<RootObject>(UserFakeData.UserInfo);
 
-			return root.Items;
-		}
+            return root.Items;
+        }
 
-		public async Task<List<GitHubUserInfo>> GetUserByName(string name)
-		{
+        public async Task<List<GitHubUserInfo>> GetUserByName(string name)
+        {
             List<GitHubUserInfo> list = new List<GitHubUserInfo>();
 
             if (!string.IsNullOrWhiteSpace(name))

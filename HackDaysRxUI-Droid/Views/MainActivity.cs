@@ -8,13 +8,17 @@ using Android.Text;
 using System.Reactive.Linq;
 using Android.Text.Method;
 using HackDaysRxUIDroid.Converters;
+using System.Reactive.Disposables;
+using HackDaysRxUICore.Helpers;
 
 namespace HackDaysRxUIDroid.Views
 {
-	[Activity (Label = "HackDaysRxUI-Droid", MainLauncher = true, Icon = "@mipmap/icon")]
-	public class MainActivity : ReactiveActivity<ViewModel>
-	{
-		protected override void OnCreate (Bundle savedInstanceState)
+    //[Activity (Label = "HackDaysRxUI-Droid", MainLauncher = true, Icon = "@mipmap/icon")]
+    public class MainActivity : ReactiveActivity<ViewModel>
+    {
+        private CompositeDisposable compositeDisposables = new CompositeDisposable();
+
+        protected override void OnCreate (Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
 
@@ -46,23 +50,31 @@ namespace HackDaysRxUIDroid.Views
                             .Subscribe(log =>
                             {
                                 Log.TextFormatted = Html.FromHtml("<b>" + log + "</b>");
-                            });
+                            })
+                            .DisposeWith(compositeDisposables);
+        }
+
+        protected override void OnDestroy()
+        {
+            compositeDisposables.Clear();
+
+            base.OnDestroy();
         }
 
         public EditText UserNameEditText { get; private set; }
 
-		public TextView UserName { get; private set; }
+        public TextView UserName { get; private set; }
 
-		public TextView Log { get; private set; }
+        public TextView Log { get; private set; }
 
         public LinearLayout LoadingView { get; private set; }
 
-		public LinearLayout ErrorView { get; private set; }
+        public LinearLayout ErrorView { get; private set; }
 
-		public ListView UsersList { get; private set; }
+        public ListView UsersList { get; private set; }
 
-		public TextView SearchInfo { get; private set; }
-	}
+        public TextView SearchInfo { get; private set; }
+    }
 }
 
 

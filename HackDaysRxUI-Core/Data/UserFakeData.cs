@@ -2,9 +2,9 @@
 
 namespace HackDaysRxUICore
 {
-	public static class UserFakeData
-	{
-		public static readonly string UserInfo = @"{
+    public static class UserFakeData
+    {
+        public static readonly string UserInfo = @"{
   ""total_count"": 37534,
   ""incomplete_results"": false,
   ""items"": [
@@ -611,6 +611,6 @@ namespace HackDaysRxUICore
   ]
 }
 ";
-	}
+    }
 }
 
