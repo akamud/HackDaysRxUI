@@ -14,12 +14,6 @@ namespace HackDaysRxUICore
     public class GitHubService
     {
         readonly Random _random = new Random();
-        private List<GitHubUserInfo> list;
-
-        public GitHubService()
-        {
-            list = new List<GitHubUserInfo>();
-        }
 
         static List<GitHubUserInfo> GetAll()
         {

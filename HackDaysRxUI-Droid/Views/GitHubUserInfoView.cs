@@ -21,7 +21,6 @@ namespace HackDaysRxUIDroid.Views
         public GitHubUserInfoView(GitHubUserInfo viewModel, Context ctx, ViewGroup parent) : base(ctx, Resource.Layout.GitHubUserInfo, parent)
         {
             ViewModel = viewModel;
-            //this.OneWayBind(ViewModel, vm => vm.Login, v => v.Login.Text);
             this.OneWayBind(ViewModel, vm => vm.Login, v => v.Login.TextFormatted, vmToViewConverterOverride: new StringToSpannedTypeConverter());
         }
 
