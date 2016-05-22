@@ -8,9 +8,8 @@ using Android.Text;
 using System.Reactive.Linq;
 using Android.Text.Method;
 using HackDaysRxUIDroid.Converters;
-using HackDaysRxUIDroid.Views;
 
-namespace HackDaysRxUIDroid
+namespace HackDaysRxUIDroid.Views
 {
 	[Activity (Label = "HackDaysRxUI-Droid", MainLauncher = true, Icon = "@mipmap/icon")]
 	public class MainActivity : ReactiveActivity<ViewModel>
