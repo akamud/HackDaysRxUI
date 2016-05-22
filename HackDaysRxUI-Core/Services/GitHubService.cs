@@ -51,6 +51,7 @@ namespace HackDaysRxUICore
             //erros
             if (_random.Next(100) > 90)
             {
+                Debug.WriteLine("*********************** ERRO ***************************");
                 throw new InvalidOperationException("deu ruim");
             }
 

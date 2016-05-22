@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Reactive.Disposables;
 using HackDaysRxUICore.Helpers;
 using System.Linq;
+using System.Reactive;
 
 namespace HackDaysRxUIDroid.Views
 {
@@ -30,7 +31,7 @@ namespace HackDaysRxUIDroid.Views
             Log = FindViewById<TextView>(Resource.Id.Log);
             Log.MovementMethod = new ScrollingMovementMethod();
 
-            //Range();
+            Range();
 
             //Timer();
 
@@ -38,7 +39,11 @@ namespace HackDaysRxUIDroid.Views
 
             //Merge();
 
+            //CombineLatest();
+
             //Zip();
+
+            //ObservableAsync();
         }
 
 
@@ -60,6 +65,7 @@ namespace HackDaysRxUIDroid.Views
             var rangeStream = Observable.Range(1, 10);
 
             rangeStream
+                //.StartWith(0)
                 .Subscribe(num =>
                     RunOnUiThread(() =>
                     {
@@ -71,10 +77,10 @@ namespace HackDaysRxUIDroid.Views
         private void EventPattern()
         {
             var textStream = Observable.FromEventPattern<EventHandler<TextChangedEventArgs>, TextChangedEventArgs>(
-                                x => UserNameEditText.TextChanged += x,
-                                x => UserNameEditText.TextChanged -= x
-                            );
-            //.Select(args => args.EventArgs.Text);
+                                            x => UserNameEditText.TextChanged += x,
+                                            x => UserNameEditText.TextChanged -= x
+                                        );
+                                        //.Select(args => args.EventArgs.Text);
 
             textStream
                 //.Where(text => text.Contains('o'))
@@ -89,13 +95,12 @@ namespace HackDaysRxUIDroid.Views
                 .DisposeWith(compositeDisposables);
         }
 
+        
+
         private void Merge()
         {
-            var textStream = Observable.FromEventPattern<EventHandler<TextChangedEventArgs>, TextChangedEventArgs>(
-                                x => UserNameEditText.TextChanged += x,
-                                x => UserNameEditText.TextChanged -= x
-                            )
-                            .Select(args => args.EventArgs.Text);
+            var textStream = CreateObservableFromEvent()
+                                .Select(args => args.EventArgs.Text);
 
             var rangeStream = Observable.Interval(TimeSpan.FromSeconds(1))
                 .Select(num => num.ToString());
@@ -110,13 +115,28 @@ namespace HackDaysRxUIDroid.Views
                 .DisposeWith(compositeDisposables);
         }
 
+        private void CombineLatest()
+        {
+            var textStream = CreateObservableFromEvent()
+                                .Select(args => args.EventArgs.Text);
+
+            var rangeStream = Observable.Interval(TimeSpan.FromSeconds(1))
+                .Select(num => num.ToString());
+
+            textStream
+                .CombineLatest(rangeStream, (text, num) => text + " " + num)
+                .Subscribe(text =>
+                    RunOnUiThread(() =>
+                    {
+                        Log.Text = text.ToString() + "\n" + Log.Text;
+                    }))
+                .DisposeWith(compositeDisposables);
+        }
+
         private void Zip()
         {
-            var textStream = Observable.FromEventPattern<EventHandler<TextChangedEventArgs>, TextChangedEventArgs>(
-                                x => UserNameEditText.TextChanged += x,
-                                x => UserNameEditText.TextChanged -= x
-                            )
-                            .Select(args => args.EventArgs.Text);
+            var textStream = CreateObservableFromEvent()
+                                .Select(args => args.EventArgs.Text);
 
             var rangeStream = Observable.Interval(TimeSpan.FromSeconds(1))
                 .Select(num => num.ToString());
@@ -131,6 +151,45 @@ namespace HackDaysRxUIDroid.Views
                 .DisposeWith(compositeDisposables);
         }
 
+        private void ObservableAsync()
+        {
+            var gitHubService = new GitHubService();
+            var button = FindViewById<Button>(Resource.Id.myButton);
+
+            button.Click += (e, s) => {
+                Log.TextFormatted = null;
+                var asyncStream = Observable.FromAsync(_ => gitHubService.GetUserByName("om"));
+                
+                asyncStream
+                    //.Timeout(TimeSpan.FromSeconds(2))
+                    //.Retry(3)
+                    //.Catch<List<GitHubUserInfo>, Exception>(ex => Observable.Return<List<GitHubUserInfo>>(null))
+                    .Subscribe(usersList =>
+                        RunOnUiThread(() =>
+                        {
+                            if (usersList == null)
+                                Log.TextFormatted = Html.FromHtml("<font color='red'>Erro</font>");
+                            else
+                            {
+                                string users = "";
+                                foreach (var user in usersList)
+                                {
+                                    users = users + user.Login.ToString() + "<br />";
+                                }
+                                Log.TextFormatted = Html.FromHtml(users);
+                            }
+                        }))
+                    .DisposeWith(compositeDisposables);
+            };
+        }
+
+        private IObservable<EventPattern<TextChangedEventArgs>> CreateObservableFromEvent()
+        {
+            return Observable.FromEventPattern<EventHandler<TextChangedEventArgs>, TextChangedEventArgs>(
+                                            x => UserNameEditText.TextChanged += x,
+                                            x => UserNameEditText.TextChanged -= x
+                                        );
+        }
 
         protected override void OnDestroy()
         {
