@@ -69,7 +69,8 @@ namespace HackDaysRxUIDroid.Views
                     RunOnUiThread(() =>
                     {
                         Log.Text = num.ToString() + "\n" + Log.Text;
-                    }))
+                    }), 
+                    () => Log.Text = "Completed \n" + Log.Text)
                 .DisposeWith(compositeDisposables);
         }
 
