@@ -16,6 +16,7 @@ namespace HackDaysRxUICore
 
         public ViewModel()
         {
+            Search = ReactiveCommand.CreateAsyncTask(parameter => GetGitHubUsers((string)parameter));
             #region config
             // Executing
             //_IsLoading = Search.IsExecuting
@@ -36,7 +37,7 @@ namespace HackDaysRxUICore
 
             #region command
             //this.WhenAnyValue(u => u.UserName)
-            //    .SelectMany(u => this.Search.ExecuteAsync())
+            //    .SelectMany(u => this.Search.ExecuteAsync(u))
             //    .Subscribe(results =>
             //    {
             //        SearchResults.Clear();
