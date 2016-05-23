@@ -36,6 +36,8 @@ namespace HackDaysRxUIDroid.Views
 
             //EventPattern();
 
+            //Buffer();
+
             //Merge();
 
             //CombineLatest();
@@ -95,6 +97,20 @@ namespace HackDaysRxUIDroid.Views
                 .DisposeWith(compositeDisposables);
         }
 
+        private void Buffer()
+        {
+            var rangeStream = Observable.Interval(TimeSpan.FromMilliseconds(7));
+
+            rangeStream
+                //.Buffer(TimeSpan.FromMilliseconds(500))
+                .Subscribe(text =>
+                    RunOnUiThread(() =>
+                    {
+                        //Log.Text = "Views: +" + list.Count.ToString() + "\n" +
+                        //            "Total: " + list.Last().ToString();
+                        Log.Text = "Total: " + text.ToString();
+                    }));
+        }
         
 
         private void Merge()
