@@ -84,6 +84,10 @@ namespace HackDaysRxUIDroid.Views
         public TextView Log { get; private set; }
 
         public ListView UsersList { get; private set; }
+
+        public LinearLayout ErrorView { get; private set; }
+
+        public LinearLayout LoadingView { get; private set; }
     }
 }
 

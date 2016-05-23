@@ -18,8 +18,8 @@ namespace HackDaysRxUICore
         {
             #region config
             // Executing
-            //_LoadingVisibility = Search.IsExecuting
-            //    .ToProperty(this, s => s.LoadingVisibility, true);
+            //_IsLoading = Search.IsExecuting
+            //    .ToProperty(this, s => s.IsLoading, true);
 
             //// Erros
             //Search.ThrownExceptions.Subscribe(ex =>
@@ -28,8 +28,9 @@ namespace HackDaysRxUICore
             //    AppendLog("Erro buscando por: " + this.UserName);
             //});
 
-            //Search.OnExecuteCompleted(result => {
-            //    AppendLog("Encontrado " + result.Count + " usuários buscando por " + this.UserName);
+            //Search.OnExecuteCompleted(result =>
+            //{
+            //    AppendLog("Encontrado " + result.Count + " usuários");
             //});
             #endregion
 
@@ -47,9 +48,9 @@ namespace HackDaysRxUICore
 
         #region prop
         // Valor depende de outra property, transformada em um observable
-        ObservableAsPropertyHelper<bool> _LoadingVisibility;
-        public bool LoadingVisibility  {
-            get { return _LoadingVisibility.Value; }
+        ObservableAsPropertyHelper<bool> _IsLoading;
+        public bool IsLoading  {
+            get { return _IsLoading.Value; }
         }
 
         private bool _showError;
