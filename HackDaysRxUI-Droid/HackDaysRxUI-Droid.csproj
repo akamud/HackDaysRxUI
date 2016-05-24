@@ -81,12 +81,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Converters\StringToSpannedTypeConverter.cs" />
-    <Compile Include="Views\SimpleRxActivity.cs" />
     <Compile Include="Views\MainActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Converters\BooleanToVisibilityTypeConverter.cs" />
-    <Compile Include="Views\GitHubUserInfoView.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

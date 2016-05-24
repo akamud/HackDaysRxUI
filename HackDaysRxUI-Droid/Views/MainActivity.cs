@@ -31,27 +31,6 @@ namespace HackDaysRxUIDroid.Views
             this.Bind(ViewModel, vm => vm.UserName, v => v.UserNameEditText.Text);
             this.Bind(ViewModel, vm => vm.LoadingVisibility, v => v.LoadingView.Visibility, null, new BooleanToVisibilityTypeConverter(), new BooleanToVisibilityTypeConverter());
             this.Bind(ViewModel, vm => vm.ShowError, v => v.ErrorView.Visibility, null, new BooleanToVisibilityTypeConverter(), new BooleanToVisibilityTypeConverter());
-
-            var adapter = new ReactiveListAdapter<GitHubUserInfo>(
-                ViewModel.SearchResults,
-                (viewModel, parent) => new GitHubUserInfoView(viewModel, this, parent));
-
-            UsersList.Adapter = adapter;
-
-            EnableConsoleLog();
-        }
-
-        private void EnableConsoleLog()
-        {
-            Log.MovementMethod = new ScrollingMovementMethod();
-
-            ViewModel.WhenAnyValue(x => x.Log)
-                            .Where(log => !string.IsNullOrWhiteSpace(log))
-                            .Subscribe(log =>
-                            {
-                                Log.TextFormatted = Html.FromHtml("<b>" + log + "</b>");
-                            })
-                            .DisposeWith(compositeDisposables);
         }
 
         protected override void OnDestroy()

@@ -12,37 +12,27 @@ namespace HackDaysRxUICore
     {
         public ViewModel()
         {
-            Search = ReactiveCommand.CreateAsyncTask(parameter => GetGitHubUsers(this.UserName));
+            Search = ReactiveCommand.CreateAsyncTask(parameter => GetGitHubUsers((string)parameter));
 
             // Executing
             _LoadingVisibility = Search.IsExecuting
                 .ToProperty(this, s => s.LoadingVisibility, true);
 
-            // Erros
-            Search.ThrownExceptions.Subscribe(ex =>
-            {
-                ShowError = true;
-                AppendLog("Erro buscando por: " + this.UserName);
-            });
-
-            Search.OnExecuteCompleted(result => {
-                AppendLog("Encontrado " + result.Count + " usuários buscando por " + this.UserName);
-            });
-
             this.WhenAnyValue(u => u.UserName)
-                .Throttle(TimeSpan.FromMilliseconds(250), RxApp.MainThreadScheduler)
-                .Where(s => !string.IsNullOrWhiteSpace(s))
-                .Select(x => x.Trim())
-                .DistinctUntilChanged()
-                .Select(u => this.Search.ExecuteAsync())
+                .Select(u => this.Search.ExecuteAsync(u))
                 .Switch()
-                .Retry()
                 .Subscribe(results =>
                 {
                     SearchResults.Clear();
                     if (results != null)
                         SearchResults.AddRange(results);
-                });
+                }, ex => { ShowError = true; });
+        }
+
+        ObservableAsPropertyHelper<bool> _LoadingVisibility;
+        public bool LoadingVisibility
+        {
+            get { return _LoadingVisibility.Value; }
         }
 
         public ReactiveCommand<List<GitHubUserInfo>> Search { get; protected set; }
@@ -54,11 +44,6 @@ namespace HackDaysRxUICore
         public string UserName {
             get { return _userName; }
             set { this.RaiseAndSetIfChanged(ref _userName, value); }
-        }
-
-        ObservableAsPropertyHelper<bool> _LoadingVisibility;
-        public bool LoadingVisibility  {
-            get { return _LoadingVisibility.Value; }
         }
 
         private bool _showError;
@@ -76,24 +61,10 @@ namespace HackDaysRxUICore
             set { this.RaiseAndSetIfChanged(ref _searchResults, value); }
         }
 
-        private string _log;
-
-        public string Log
-        {
-            get { return _log; }
-            set { this.RaiseAndSetIfChanged(ref _log, value); }
-        }
-
-        private void AppendLog(string log)
-        {
-            Log = string.IsNullOrWhiteSpace(Log) ? log : log + "<br /><br />" + Log;
-        }
-
         private async Task<List<GitHubUserInfo>> GetGitHubUsers(string username)
         {
+            Debug.WriteLine("Searching: " + username);
             ShowError = false;
-
-            AppendLog("Buscando por: " + username);
 
             return await GitHubService.GetUserByName(username);
         }

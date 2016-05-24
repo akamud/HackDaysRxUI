@@ -49,7 +49,7 @@ namespace HackDaysRxUICore
                 await Task.Delay(_random.Next(1000, 3000));
 
             //erros
-            if (_random.Next(100) > 90)
+            if (_random.Next(100) > 30)
             {
                 Debug.WriteLine("*********************** ERRO ***************************");
                 throw new InvalidOperationException("deu ruim");
