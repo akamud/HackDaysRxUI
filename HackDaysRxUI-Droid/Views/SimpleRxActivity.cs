@@ -26,9 +26,11 @@ namespace HackDaysRxUIDroid.Views
 
             SetContentView(Resource.Layout.Main);
 
+            #region initialize
             UserNameEditText = FindViewById<EditText>(Resource.Id.UserNameEditText);
             Log = FindViewById<TextView>(Resource.Id.Log);
             Log.MovementMethod = new ScrollingMovementMethod();
+            #endregion
 
             Range();
 
@@ -86,13 +88,11 @@ namespace HackDaysRxUIDroid.Views
 
             textStream
                 //.Where(text => text.Contains('o'))
-                //.Buffer(3)
                 //.Throttle(TimeSpan.FromSeconds(1))
-                //.Delay(TimeSpan.FromSeconds(1))
                 .Subscribe(text =>
                     RunOnUiThread(() =>
                     {
-                        Log.Text = text.ToString() + "\n" + Log.Text;
+                        Log.Text = text + "\n" + Log.Text;
                     }))
                 .DisposeWith(compositeDisposables);
         }
@@ -111,7 +111,6 @@ namespace HackDaysRxUIDroid.Views
                         Log.Text = "Total: " + text.ToString();
                     }));
         }
-        
 
         private void Merge()
         {
