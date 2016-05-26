@@ -68,7 +68,6 @@ namespace HackDaysRxUIDroid.Views
             var rangeStream = Observable.Range(1, 10);
 
             rangeStream
-                //.StartWith(0)
                 .Subscribe(num =>
                     RunOnUiThread(() =>
                     {
@@ -92,7 +91,7 @@ namespace HackDaysRxUIDroid.Views
                 .Subscribe(text =>
                     RunOnUiThread(() =>
                     {
-                        Log.Text = text + "\n" + Log.Text;
+                        Log.Text = text.EventArgs.Text + "\n" + Log.Text;
                     }))
                 .DisposeWith(compositeDisposables);
         }
