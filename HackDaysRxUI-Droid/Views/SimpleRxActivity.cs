@@ -15,7 +15,7 @@ using System.Reactive;
 
 namespace HackDaysRxUIDroid.Views
 {
-    //[Activity (Label = "HackDaysRxUI-Simple-Rx", MainLauncher = true, Icon = "@mipmap/icon")]
+    [Activity (Label = "HackDaysRxUI-Simple-Rx", MainLauncher = true, Icon = "@mipmap/icon")]
     public class SimpleRxActivity : Activity
     {
         private CompositeDisposable compositeDisposables = new CompositeDisposable();

@@ -13,7 +13,7 @@ using HackDaysRxUICore.Helpers;
 
 namespace HackDaysRxUIDroid.Views
 {
-    [Activity (Label = "HackDaysRxUI-Droid", MainLauncher = true, Icon = "@mipmap/icon")]
+    //[Activity (Label = "HackDaysRxUI-Droid", MainLauncher = true, Icon = "@mipmap/icon")]
     public class MainActivity : ReactiveActivity<ViewModel>
     {
         private CompositeDisposable compositeDisposables = new CompositeDisposable();
