@@ -14,7 +14,7 @@ using HackDaysRxUICore.Helpers;
 namespace HackDaysRxUIDroid.Views
 {
     [Activity (Label = "HackDaysRxUI-Droid", MainLauncher = true, Icon = "@mipmap/icon")]
-    public class MainActivity : Activity
+    public class MainActivity : ReactiveActivity<ViewModel>
     {
         private CompositeDisposable compositeDisposables = new CompositeDisposable();
         private GitHubService gitHubService = new GitHubService();
@@ -25,47 +25,34 @@ namespace HackDaysRxUIDroid.Views
 
             SetContentView(Resource.Layout.Main);
 
-            MyButton = FindViewById<Button>(Resource.Id.myButton);
-            UserNameEditText = FindViewById<EditText>(Resource.Id.UserNameEditText);
-            Log = FindViewById<TextView>(Resource.Id.Log);
+            this.WireUpControls();
 
-            MyButton.Click += async (e, s) => {
-                Log.TextFormatted = null;
-                var usersList = await gitHubService.GetUserByName(UserNameEditText.Text);
+            ViewModel = new ViewModel();
 
-                RunOnUiThread(() =>
-                {
-                    string users = "";
-                    foreach (var user in usersList)
-                    {
-                        users = users + user.Login.ToString() + "<br />";
-                    }
-                    Log.TextFormatted = Html.FromHtml(users);
-                });
-            };
+            this.Bind(ViewModel, vm => vm.UserName, v => v.UserNameEditText.Text);
 
             #region adapter
-            //var adapter = new ReactiveListAdapter<GitHubUserInfo>(
-            //    ViewModel.SearchResults,
-            //    (viewModel, parent) => new GitHubUserInfoView(viewModel, this, parent));
+            var adapter = new ReactiveListAdapter<GitHubUserInfo>(
+                ViewModel.SearchResults,
+                (viewModel, parent) => new GitHubUserInfoView(viewModel, this, parent));
 
-            //UsersList.Adapter = adapter;
+            UsersList.Adapter = adapter;
             #endregion
 
-            //EnableConsoleLog();
+            EnableConsoleLog();
         }
 
         private void EnableConsoleLog()
         {
-            //Log.MovementMethod = new ScrollingMovementMethod();
+            Log.MovementMethod = new ScrollingMovementMethod();
 
-            //ViewModel.WhenAnyValue(x => x.Log)
-            //                .Where(log => !string.IsNullOrWhiteSpace(log))
-            //                .Subscribe(log =>
-            //                {
-            //                    Log.TextFormatted = Html.FromHtml("<b>" + log + "</b>");
-            //                })
-            //                .DisposeWith(compositeDisposables);
+            ViewModel.WhenAnyValue(x => x.Log)
+                            .Where(log => !string.IsNullOrWhiteSpace(log))
+                            .Subscribe(log =>
+                            {
+                                Log.TextFormatted = Html.FromHtml("<b>" + log + "</b>");
+                            })
+                            .DisposeWith(compositeDisposables);
         }
 
         protected override void OnDestroy()

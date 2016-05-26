@@ -45,6 +45,24 @@ namespace HackDaysRxUICore
             //            SearchResults.AddRange(results);
             //    });
             #endregion
+
+            this.WhenAnyValue(u => u.UserName)
+                .SelectMany(s => Search.ExecuteAsync(s))
+                .Subscribe(results =>
+                {
+                    SearchResults.Clear();
+                    if (results != null)
+                        SearchResults.AddRange(results);
+                });
+        }
+
+
+        private string _userName;
+
+        public string UserName
+        {
+            get { return _userName; }
+            set { this.RaiseAndSetIfChanged(ref _userName, value); }
         }
 
         #region prop
