@@ -49,11 +49,11 @@ namespace HackDaysRxUICore
                 await Task.Delay(_random.Next(1000, 3000));
 
             //erros
-            //if (_random.Next(100) > 90)
-            //{
-            //    Debug.WriteLine("*********************** ERRO ***************************");
-            //    throw new InvalidOperationException("deu ruim");
-            //}
+            if (_random.Next(100) > 90)
+            {
+                Debug.WriteLine("*********************** ERRO ***************************");
+                throw new InvalidOperationException("deu ruim");
+            }
 
             var list = GetAll().Where(c => c.Login.ToLower().Contains(name.ToLower())).ToList();
             ApplyFormatting(name, list);
