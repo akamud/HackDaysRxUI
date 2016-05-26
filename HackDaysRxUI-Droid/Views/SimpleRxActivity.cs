@@ -176,7 +176,6 @@ namespace HackDaysRxUIDroid.Views
                 
                 asyncStream
                     //.Timeout(TimeSpan.FromSeconds(2))
-                    //.Retry(3)
                     //.Catch<List<GitHubUserInfo>, Exception>(ex => Observable.Return<List<GitHubUserInfo>>(null))
                     .Subscribe(usersList =>
                         RunOnUiThread(() =>
