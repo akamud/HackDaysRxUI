@@ -40,6 +40,7 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Java.Interop" />
     <Reference Include="Octokit, Version=0.19.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Octokit.0.19.0\lib\portable-net45+wp80+win+wpa81\Octokit.dll</HintPath>
       <Private>True</Private>
