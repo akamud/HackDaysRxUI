@@ -8,13 +8,13 @@ using Octokit;
 
 namespace HackDaysRxUICore
 {
-    public class ViewModel : ReactiveObject
+    public class GitHubUserViewModel : ReactiveObject
     {
         public ReactiveCommand<List<GitHubUserInfo>> Search { get; protected set; }
 
         private readonly GitHubService GitHubService = new GitHubService();
 
-        public ViewModel()
+        public GitHubUserViewModel()
         {
             Search = ReactiveCommand.CreateAsyncTask(parameter => GetGitHubUsers((string)parameter));
             #region config

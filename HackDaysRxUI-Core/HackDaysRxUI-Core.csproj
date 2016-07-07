@@ -32,7 +32,7 @@
   <ItemGroup>
     <Compile Include="Helpers\IObservableExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ViewModels\ViewModel.cs" />
+    <Compile Include="ViewModels\GitHubUserViewModel.cs" />
     <Compile Include="ViewModels\GitHubUserInfo.cs" />
     <Compile Include="Services\GitHubService.cs" />
     <Compile Include="Data\UserFakeData.cs" />
